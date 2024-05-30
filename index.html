@@ -8,11 +8,11 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0;
-            padding: 0;
+            padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            flex-direction: column;
             background-color: #f7f7f7;
         }
         .container {
@@ -20,8 +20,9 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 500px;
+            max-width: 600px;
             width: 100%;
+            margin-bottom: 20px;
         }
         h1 {
             text-align: center;
@@ -44,7 +45,7 @@
         button {
             width: 100%;
             padding: 10px;
-            background-color: #287ba7;
+            background-color: #2889a7;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -52,7 +53,7 @@
             font-size: 16px;
         }
         button:hover {
-            background-color: #124c6b;
+            background-color: #1f4b58;
         }
         .result {
             text-align: center;
@@ -64,6 +65,11 @@
             font-size: 12px;
             color: #777;
             text-align: center;
+        }
+        .explanation {
+            font-size: 14px;
+            color: #555;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -108,134 +114,169 @@
 
         <button onclick="calculateProbability()">Calculate Probability</button>
         <div class="result" id="result"></div>
-        <div class="disclaimer">
-            Data source: <a href="https://www.lsd.law/download" target="_blank">https://www.lsd.law/download</a><br>
-            <br>
-            The data used for building the logistic model comes from the 2019-2023 cycles.<br>
-            The output is for reference only and should be taken with a grain of salt.<br><br>
-            Developed by Frederick Liu, last updated: 5/30/2024 <br>
-        </div>
+    </div>
+
+    <div class="container explanation">
+        <h2>Explanation of Metrics</h2>
+        <p><strong>Accuracy:</strong> The proportion of correctly classified instances. It is a measure of how often the model is correct. A higher accuracy indicates a better model.</p>
+        <p><strong>AUC (Area Under the Curve):</strong> The area under the ROC (Receiver Operating Characteristic) curve. It measures the ability of the model to distinguish between positive and negative classes. An AUC of 0.5 indicates no discriminative power, while an AUC of 1.0 indicates perfect classification.</p>
+    </div>
+
+    <div class="disclaimer">
+        Data source: <a href="https://www.lsd.law/download" target="_blank">https://www.lsd.law/download</a><br>
+        Model was built based on data from the 2019-2023 cycles.<br>
+        This is for reference usage only.<br>
+        <br>
+        Developed by Frederick Liu. Last updated: 5/30/2024.
+
     </div>
 
     <script>
         function calculateProbability() {
+            const school = document.getElementById('school').value;
             const lsat = parseFloat(document.getElementById('lsat').value);
             const gpa = parseFloat(document.getElementById('gpa').value);
-
-            if (lsat > 180) {
-                alert("LSAT score cannot be greater than 180.");
-                return;
-            }
-
-            if (gpa > 4.33) {
-                alert("GPA cannot be greater than 4.33.");
-                return;
-            }
-
-            const school = document.getElementById('school').value;
             const international = parseInt(document.getElementById('international').value);
             const urm = parseInt(document.getElementById('urm').value);
 
-            let beta_lsat, beta_gpa, beta_international, beta_urm, beta_0;
+            if (lsat > 180 || lsat < 120) {
+                alert("LSAT score must be between 120 and 180.");
+                return;
+            }
+
+            if (gpa > 4.33 || gpa < 0) {
+                alert("GPA must be between 0 and 4.33.");
+                return;
+            }
+
+            let beta_lsat, beta_gpa, beta_international, beta_urm, beta_0, accuracy, auc;
 
             switch (school) {
                 case 'yale':
-                    beta_lsat = 0.193;
-                    beta_gpa = 5.757;
-                    beta_international = -1.488;
-                    beta_urm = 2.099;
-                    beta_0 = -57.930;
+                    beta_lsat = 0.186;
+                    beta_gpa = 5.478;
+                    beta_international = -1.232;
+                    beta_urm = 2.081;
+                    beta_0 = -55.625;
+                    accuracy = 89.51;
+                    auc = 90.57;
                     break;
                 case 'stanford':
-                    beta_lsat = 0.202;
-                    beta_gpa = 5.463;
-                    beta_international = -0.718;
-                    beta_urm = 2.518;
-                    beta_0 = -57.571;
+                    beta_lsat = 0.184;
+                    beta_gpa = 5.118;
+                    beta_international = -0.490;
+                    beta_urm = 2.347;
+                    beta_0 = -53.152;
+                    accuracy = 85.06;
+                    auc = 90.38;
                     break;
                 case 'harvard':
                     beta_lsat = 0.214;
-                    beta_gpa = 4.838;
-                    beta_international = -1.244;
-                    beta_urm = 1.222;
-                    beta_0 = -57.143;
+                    beta_gpa = 5.030;
+                    beta_international = -1.223;
+                    beta_urm = 1.191;
+                    beta_0 = -57.949;
+                    accuracy = 85.09;
+                    auc = 82.94;
                     break;
                 case 'chicago':
-                    beta_lsat = 0.232;
-                    beta_gpa = 7.319;
-                    beta_international = -2.010;
-                    beta_urm = 3.331;
-                    beta_0 = -68.044;
+                    beta_lsat = 0.237;
+                    beta_gpa = 6.592;
+                    beta_international = -1.935;
+                    beta_urm = 3.287;
+                    beta_0 = -66.109;
+                    accuracy = 89.96;
+                    auc = 94.64;
                     break;
                 case 'columbia':
-                    beta_lsat = 0.223;
-                    beta_gpa = 8.587;
-                    beta_international = -0.094;
-                    beta_urm = 2.976;
-                    beta_0 = -70.499;
+                    beta_lsat = 0.233;
+                    beta_gpa = 8.219;
+                    beta_international = -0.502;
+                    beta_urm = 2.930;
+                    beta_0 = -70.890;
+                    accuracy = 88.85;
+                    auc = 94.70;
                     break;
                 case 'penn':
-                    beta_lsat = 0.295;
-                    beta_gpa = 4.987;
-                    beta_international = -1.852;
-                    beta_urm = 1.830;
-                    beta_0 = -69.476;
+                    beta_lsat = 0.284;
+                    beta_gpa = 4.902;
+                    beta_international = -1.762;
+                    beta_urm = 1.986;
+                    beta_0 = -67.442;
+                    accuracy = 84.63;
+                    auc = 90.44;
                     break;
                 case 'nyu':
-                    beta_lsat = 0.353;
-                    beta_gpa = 8.409;
-                    beta_international = -1.457;
-                    beta_urm = 2.374;
-                    beta_0 = -92.081;
+                    beta_lsat = 0.338;
+                    beta_gpa = 8.009;
+                    beta_international = -1.620;
+                    beta_urm = 2.300;
+                    beta_0 = -88.010;
+                    accuracy = 89.84;
+                    auc = 95.70;
                     break;
                 case 'duke':
-                    beta_lsat = 0.292;
-                    beta_gpa = 6.231;
-                    beta_international = -1.023;
-                    beta_urm = 1.979;
-                    beta_0 = -73.151;
+                    beta_lsat = 0.299;
+                    beta_gpa = 6.407;
+                    beta_international = -1.156;
+                    beta_urm = 1.861;
+                    beta_0 = -75.069;
+                    accuracy = 85.53;
+                    auc = 89.73;
                     break;
                 case 'berk':
-                    beta_lsat = 0.200;
-                    beta_gpa = 5.225;
-                    beta_international = -1.178;
-                    beta_urm = 1.334;
-                    beta_0 = -54.478;
+                    beta_lsat = 0.198;
+                    beta_gpa = 5.062;
+                    beta_international = -1.203;
+                    beta_urm = 1.223;
+                    beta_0 = -53.402;
+                    accuracy = 79.46;
+                    auc = 87.51;
                     break;
                 case 'virginia':
-                    beta_lsat = 0.211;
-                    beta_gpa = 3.517;
-                    beta_international = -2.289;
-                    beta_urm = 1.853;
-                    beta_0 = -49.315;
+                    beta_lsat = 0.207;
+                    beta_gpa = 3.439;
+                    beta_international = -2.374;
+                    beta_urm = 1.724;
+                    beta_0 = -48.249;
+                    accuracy = 82.64;
+                    auc = 87.66;
                     break;
                 case 'michigan':
-                    beta_lsat = 0.135;
-                    beta_gpa = 2.321;
-                    beta_international = -3.330;
-                    beta_urm = 1.751;
-                    beta_0 = -31.883;
+                    beta_lsat = 0.132;
+                    beta_gpa = 2.266;
+                    beta_international = -3.014;
+                    beta_urm = 1.817;
+                    beta_0 = -31.221;
+                    accuracy = 74.26;
+                    auc = 81.53;
                     break;
                 case 'northwestern':
-                    beta_lsat = 0.319;
-                    beta_gpa = 4.092;
-                    beta_international = -0.979;
-                    beta_urm = 2.654;
-                    beta_0 = -68.959;
+                    beta_lsat = 0.318;
+                    beta_gpa = 4.279;
+                    beta_international = -1.155;
+                    beta_urm = 2.765;
+                    beta_0 = -69.494;
+                    accuracy = 84.21;
+                    auc = 92.65;
                     break;
                 case 'cornell':
-                    beta_lsat = 0.329;
-                    beta_gpa = 5.257;
-                    beta_international = -0.240;
-                    beta_urm = 2.268;
-                    beta_0 = -76.240;
+                    beta_lsat = 0.325;
+                    beta_gpa = 4.860;
+                    beta_international = 0.001;
+                    beta_urm = 2.263;
+                    beta_0 = -73.947;
+                    accuracy = 88.82;
+                    auc = 92.25;
                     break;
                 case 'georgetown':
-                    beta_lsat = 0.366;
-                    beta_gpa = 5.049;
-                    beta_international = -0.828;
-                    beta_urm = 2.685;
-                    beta_0 = -80.144;
+                    beta_lsat = 0.380;
+                    beta_gpa = 5.178;
+                    beta_international = -0.499;
+                    beta_urm = 2.545;
+                    beta_0 = -83.024;
+                    accuracy = 86.64;
+                    auc = 94.68;
                     break;
                 default:
                     alert('Invalid school selected');
@@ -247,7 +288,11 @@
 
             const probability = 1 / (1 + Math.exp(-logit_p));
 
-            document.getElementById('result').innerText = `Probability of Acceptance: ${(probability * 100).toFixed(2)}%`;
+            document.getElementById('result').innerHTML = `
+                <p>Probability of Acceptance: ${(probability * 100).toFixed(2)}%</p>
+                <p>Model Accuracy: ${accuracy}%</p>
+                <p>Model AUC: ${auc}%</p>
+            `;
         }
     </script>
 </body>
