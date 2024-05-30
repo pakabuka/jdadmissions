@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>T14 Law School Admissions Predictor</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f7f7f7;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #287ba7;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #124c6b;
+        }
+        .result {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 18px;
+        }
+        .disclaimer {
+            margin-top: 20px;
+            font-size: 12px;
+            color: #777;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>T14 Law School Admissions Predictor</h1>
+        <label for="school">Select School:</label>
+        <select id="school">
+            <option value="yale">Yale University</option>
+            <option value="stanford">Stanford University</option>
+            <option value="harvard">Harvard University</option>
+            <option value="chicago">University of Chicago</option>
+            <option value="columbia">Columbia University</option>
+            <option value="penn">University of Pennsylvania</option>
+            <option value="nyu">New York University</option>
+            <option value="duke">Duke University</option>
+            <option value="berk">University of California, Berkeley</option>
+            <option value="virginia">University of Virginia</option>
+            <option value="michigan">University of Michigan</option>
+            <option value="northwestern">Northwestern University</option>
+            <option value="cornell">Cornell University</option>
+            <option value="georgetown">Georgetown University</option>
+        </select>
+
+        <label for="lsat">LSAT Score:</label>
+        <input type="number" id="lsat" min="120" max="180" required>
+
+        <label for="gpa">GPA:</label>
+        <input type="number" step="0.01" id="gpa" min="0" max="4.33" required>
+
+        <label for="international">International Student:</label>
+        <select id="international">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+        </select>
+
+        <label for="urm">Under-Represented Minority (URM):</label>
+        <select id="urm">
+            <option value="0">No</option>
+            <option value="1">Yes</option>
+        </select>
+
+        <button onclick="calculateProbability()">Calculate Probability</button>
+        <div class="result" id="result"></div>
+        <div class="disclaimer">
+            Data source: <a href="https://www.lsd.law/download" target="_blank">https://www.lsd.law/download</a><br>
+            <br>
+            The data used for building the logistic model comes from the 2019-2023 cycles.<br>
+            The output is for reference only and should be taken with a grain of salt.<br><br>
+            Developed by Frederick Liu, last updated: 5/30/2024 <br>
+        </div>
+    </div>
+
+    <script>
+        function calculateProbability() {
+            const lsat = parseFloat(document.getElementById('lsat').value);
+            const gpa = parseFloat(document.getElementById('gpa').value);
+
+            if (lsat > 180) {
+                alert("LSAT score cannot be greater than 180.");
+                return;
+            }
+
+            if (gpa > 4.33) {
+                alert("GPA cannot be greater than 4.33.");
+                return;
+            }
+
+            const school = document.getElementById('school').value;
+            const international = parseInt(document.getElementById('international').value);
+            const urm = parseInt(document.getElementById('urm').value);
+
+            let beta_lsat, beta_gpa, beta_international, beta_urm, beta_0;
+
+            switch (school) {
+                case 'yale':
+                    beta_lsat = 0.193;
+                    beta_gpa = 5.757;
+                    beta_international = -1.488;
+                    beta_urm = 2.099;
+                    beta_0 = -57.930;
+                    break;
+                case 'stanford':
+                    beta_lsat = 0.202;
+                    beta_gpa = 5.463;
+                    beta_international = -0.718;
+                    beta_urm = 2.518;
+                    beta_0 = -57.571;
+                    break;
+                case 'harvard':
+                    beta_lsat = 0.214;
+                    beta_gpa = 4.838;
+                    beta_international = -1.244;
+                    beta_urm = 1.222;
+                    beta_0 = -57.143;
+                    break;
+                case 'chicago':
+                    beta_lsat = 0.232;
+                    beta_gpa = 7.319;
+                    beta_international = -2.010;
+                    beta_urm = 3.331;
+                    beta_0 = -68.044;
+                    break;
+                case 'columbia':
+                    beta_lsat = 0.223;
+                    beta_gpa = 8.587;
+                    beta_international = -0.094;
+                    beta_urm = 2.976;
+                    beta_0 = -70.499;
+                    break;
+                case 'penn':
+                    beta_lsat = 0.295;
+                    beta_gpa = 4.987;
+                    beta_international = -1.852;
+                    beta_urm = 1.830;
+                    beta_0 = -69.476;
+                    break;
+                case 'nyu':
+                    beta_lsat = 0.353;
+                    beta_gpa = 8.409;
+                    beta_international = -1.457;
+                    beta_urm = 2.374;
+                    beta_0 = -92.081;
+                    break;
+                case 'duke':
+                    beta_lsat = 0.292;
+                    beta_gpa = 6.231;
+                    beta_international = -1.023;
+                    beta_urm = 1.979;
+                    beta_0 = -73.151;
+                    break;
+                case 'berk':
+                    beta_lsat = 0.200;
+                    beta_gpa = 5.225;
+                    beta_international = -1.178;
+                    beta_urm = 1.334;
+                    beta_0 = -54.478;
+                    break;
+                case 'virginia':
+                    beta_lsat = 0.211;
+                    beta_gpa = 3.517;
+                    beta_international = -2.289;
+                    beta_urm = 1.853;
+                    beta_0 = -49.315;
+                    break;
+                case 'michigan':
+                    beta_lsat = 0.135;
+                    beta_gpa = 2.321;
+                    beta_international = -3.330;
+                    beta_urm = 1.751;
+                    beta_0 = -31.883;
+                    break;
+                case 'northwestern':
+                    beta_lsat = 0.319;
+                    beta_gpa = 4.092;
+                    beta_international = -0.979;
+                    beta_urm = 2.654;
+                    beta_0 = -68.959;
+                    break;
+                case 'cornell':
+                    beta_lsat = 0.329;
+                    beta_gpa = 5.257;
+                    beta_international = -0.240;
+                    beta_urm = 2.268;
+                    beta_0 = -76.240;
+                    break;
+                case 'georgetown':
+                    beta_lsat = 0.366;
+                    beta_gpa = 5.049;
+                    beta_international = -0.828;
+                    beta_urm = 2.685;
+                    beta_0 = -80.144;
+                    break;
+                default:
+                    alert('Invalid school selected');
+                    return;
+            }
+
+            const logit_p = beta_0 + (beta_lsat * lsat) + (beta_gpa * gpa) +
+                            (beta_international * international) + (beta_urm * urm);
+
+            const probability = 1 / (1 + Math.exp(-logit_p));
+
+            document.getElementById('result').innerText = `Probability of Acceptance: ${(probability * 100).toFixed(2)}%`;
+        }
+    </script>
+</body>
+</html>
