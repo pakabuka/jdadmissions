@@ -117,21 +117,31 @@
     </div>
 
     <div class="container explanation">
-        <h2>Explanation of Metrics</h2>
+        <h2>Explanation of Model Performance Metrics</h2>
         <p><strong>Accuracy:</strong> The proportion of correctly classified instances. It is a measure of how often the model is correct. A higher accuracy indicates a better model.</p>
         <p><strong>AUC (Area Under the Curve):</strong> The area under the ROC (Receiver Operating Characteristic) curve. It measures the ability of the model to distinguish between positive and negative classes. An AUC of 0.5 indicates no discriminative power, while an AUC of 1.0 indicates perfect classification.</p>
+       
+        <p><strong>Interpreting AUC</strong></p>
+        <ul>
+            <li>0.5 &lt; AUC &lt; 0.7: Poor model performance.</li>
+            <li>0.7 &le; AUC &lt; 0.8: Fair performance.</li>
+            <li>0.8 &le; AUC &lt; 0.9: Good performance.</li>
+            <li>0.9 &le; AUC &lt; 1.0: Excellent performance.</li>
+        </ul>
     </div>
 
     <div class="disclaimer">
-        Data source: <a href="https://www.lsd.law/download" target="_blank">https://www.lsd.law/download</a><br>
-        Models were built based on data from the 2019-2023 cycles.<br>
-         Developed by Frederick Liu. Last updated: 5/30/2024.
-        <br>
         <br>
         Please note that the estimated chances do not indicate that you personally have a specific percentage chance (e.g., 50%) <br>
         of getting into a particular school. Instead, they reflect statistical data showing that a certain percentage (e.g., 50%) <br>
         of past applicants who had the same GPA and LSAT scores (or other similar qualifications) as you were accepted into that school.<br>
+        <br>
 
+        Data source: <a href="https://www.lsd.law/download" target="_blank">https://www.lsd.law/download</a><br>
+        Models were built based on data from the 2019-2023 cycles.<br>
+         Developed by Frederick Liu. Last updated: 5/30/2024.
+    
+        
 
     </div>
 
