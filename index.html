@@ -4,9 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>T14 Law School Admissions Predictor</title>
+    <link href="https://fonts.googleapis.com/css2?family=Spectral:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body {
-            font-family: 'Roboto', sans-serif;
+            font-family: 'Spectral', serif;
             margin: 0;
             padding: 20px;
             display: flex;
@@ -29,13 +30,13 @@
             text-align: center;
             margin-bottom: 20px;
             font-size: 24px;
-            color: #444;
+            color: #003366;
         }
         label {
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
-            color: #555;
+            color: #003366;
         }
         input[type="text"],
         input[type="number"],
@@ -51,7 +52,7 @@
         button {
             width: 100%;
             padding: 12px;
-            background-color: #007BFF;
+            background-color: #003366;
             color: #fff;
             border: none;
             border-radius: 5px;
@@ -60,13 +61,13 @@
             transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #0056b3;
+            background-color: #001f4d;
         }
         .result {
             text-align: center;
             margin-top: 20px;
             font-size: 18px;
-            color: #007BFF;
+            color: #003366;
         }
         .disclaimer {
             margin-top: 20px;
@@ -80,34 +81,35 @@
             margin-top: 10px;
         }
         a {
-            color: #007BFF;
+            color: #003366;
             text-decoration: none;
         }
         a:hover {
             text-decoration: underline;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            cursor: pointer;
+            background-color: #f2f2f2;
+            color: #003366;
+        }
+        th:hover {
+            background-color: #ddd;
         }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>T14 Law School Admissions Predictor</h1>
-        <label for="school">Select School:</label>
-        <select id="school">
-            <option value="yale">Yale University</option>
-            <option value="stanford">Stanford University</option>
-            <option value="harvard">Harvard University</option>
-            <option value="chicago">University of Chicago</option>
-            <option value="columbia">Columbia University</option>
-            <option value="penn">University of Pennsylvania</option>
-            <option value="nyu">New York University</option>
-            <option value="duke">Duke University</option>
-            <option value="berk">University of California, Berkeley</option>
-            <option value="virginia">University of Virginia</option>
-            <option value="michigan">University of Michigan</option>
-            <option value="northwestern">Northwestern University</option>
-            <option value="cornell">Cornell University</option>
-            <option value="georgetown">Georgetown University</option>
-        </select>
 
         <label for="lsat">LSAT Score:</label>
         <input type="number" id="lsat" min="120" max="180" required>
@@ -159,7 +161,6 @@
 
     <script>
         function calculateProbability() {
-            const school = document.getElementById('school').value;
             const lsat = parseFloat(document.getElementById('lsat').value);
             const gpa = parseFloat(document.getElementById('gpa').value);
             const international = parseInt(document.getElementById('international').value);
@@ -180,150 +181,71 @@
                 return;
             }
 
-            let beta_lsat, beta_gpa, beta_international, beta_urm, beta_0, accuracy, auc;
+            const schools = {
+                yale: { name: "Yale University", beta_lsat: 0.186, beta_gpa: 5.478, beta_international: -1.232, beta_urm: 2.081, beta_0: -55.625, accuracy: 89.51, auc: 90.57 },
+                stanford: { name: "Stanford University", beta_lsat: 0.184, beta_gpa: 5.118, beta_international: -0.490, beta_urm: 2.347, beta_0: -53.152, accuracy: 85.06, auc: 90.38 },
+                harvard: { name: "Harvard University", beta_lsat: 0.214, beta_gpa: 5.030, beta_international: -1.223, beta_urm: 1.191, beta_0: -57.949, accuracy: 85.09, auc: 82.94 },
+                chicago: { name: "University of Chicago", beta_lsat: 0.237, beta_gpa: 6.592, beta_international: -1.935, beta_urm: 3.287, beta_0: -66.109, accuracy: 89.96, auc: 94.64 },
+                columbia: { name: "Columbia University", beta_lsat: 0.233, beta_gpa: 8.219, beta_international: -0.502, beta_urm: 2.930, beta_0: -70.890, accuracy: 88.85, auc: 94.70 },
+                penn: { name: "University of Pennsylvania", beta_lsat: 0.284, beta_gpa: 4.902, beta_international: -1.762, beta_urm: 1.986, beta_0: -67.442, accuracy: 84.63, auc: 90.44 },
+                nyu: { name: "New York University", beta_lsat: 0.338, beta_gpa: 8.009, beta_international: -1.620, beta_urm: 2.300, beta_0: -88.010, accuracy: 89.84, auc: 95.70 },
+                duke: { name: "Duke University", beta_lsat: 0.299, beta_gpa: 6.407, beta_international: -1.156, beta_urm: 1.861, beta_0: -75.069, accuracy: 85.53, auc: 89.73 },
+                berk: { name: "University of California, Berkeley", beta_lsat: 0.198, beta_gpa: 5.062, beta_international: -1.203, beta_urm: 1.223, beta_0: -53.402, accuracy: 79.46, auc: 87.51 },
+                virginia: { name: "University of Virginia", beta_lsat: 0.207, beta_gpa: 3.439, beta_international: -2.374, beta_urm: 1.724, beta_0: -48.249, accuracy: 82.64, auc: 87.66 },
+                michigan: { name: "University of Michigan", beta_lsat: 0.132, beta_gpa: 2.266, beta_international: -3.014, beta_urm: 1.817, beta_0: -31.221, accuracy: 74.26, auc: 81.53 },
+                northwestern: { name: "Northwestern University", beta_lsat: 0.318, beta_gpa: 4.279, beta_international: -1.155, beta_urm: 2.765, beta_0: -69.494, accuracy: 84.21, auc: 92.65 },
+                cornell: { name: "Cornell University", beta_lsat: 0.325, beta_gpa: 4.860, beta_international: 0.001, beta_urm: 2.263, beta_0: -73.947, accuracy: 88.82, auc: 92.25 },
+                georgetown: { name: "Georgetown University", beta_lsat: 0.380, beta_gpa: 5.178, beta_international: -0.499, beta_urm: 2.545, beta_0: -83.024, accuracy: 86.64, auc: 94.68 }
+            };
 
-            switch (school) {
-                case 'yale':
-                    beta_lsat = 0.186;
-                    beta_gpa = 5.478;
-                    beta_international = -1.232;
-                    beta_urm = 2.081;
-                    beta_0 = -55.625;
-                    accuracy = 89.51;
-                    auc = 90.57;
-                    break;
-                case 'stanford':
-                    beta_lsat = 0.184;
-                    beta_gpa = 5.118;
-                    beta_international = -0.490;
-                    beta_urm = 2.347;
-                    beta_0 = -53.152;
-                    accuracy = 85.06;
-                    auc = 90.38;
-                    break;
-                case 'harvard':
-                    beta_lsat = 0.214;
-                    beta_gpa = 5.030;
-                    beta_international = -1.223;
-                    beta_urm = 1.191;
-                    beta_0 = -57.949;
-                    accuracy = 85.09;
-                    auc = 82.94;
-                    break;
-                case 'chicago':
-                    beta_lsat = 0.237;
-                    beta_gpa = 6.592;
-                    beta_international = -1.935;
-                    beta_urm = 3.287;
-                    beta_0 = -66.109;
-                    accuracy = 89.96;
-                    auc = 94.64;
-                    break;
-                case 'columbia':
-                    beta_lsat = 0.233;
-                    beta_gpa = 8.219;
-                    beta_international = -0.502;
-                    beta_urm = 2.930;
-                    beta_0 = -70.890;
-                    accuracy = 88.85;
-                    auc = 94.70;
-                    break;
-                case 'penn':
-                    beta_lsat = 0.284;
-                    beta_gpa = 4.902;
-                    beta_international = -1.762;
-                    beta_urm = 1.986;
-                    beta_0 = -67.442;
-                    accuracy = 84.63;
-                    auc = 90.44;
-                    break;
-                case 'nyu':
-                    beta_lsat = 0.338;
-                    beta_gpa = 8.009;
-                    beta_international = -1.620;
-                    beta_urm = 2.300;
-                    beta_0 = -88.010;
-                    accuracy = 89.84;
-                    auc = 95.70;
-                    break;
-                case 'duke':
-                    beta_lsat = 0.299;
-                    beta_gpa = 6.407;
-                    beta_international = -1.156;
-                    beta_urm = 1.861;
-                    beta_0 = -75.069;
-                    accuracy = 85.53;
-                    auc = 89.73;
-                    break;
-                case 'berk':
-                    beta_lsat = 0.198;
-                    beta_gpa = 5.062;
-                    beta_international = -1.203;
-                    beta_urm = 1.223;
-                    beta_0 = -53.402;
-                    accuracy = 79.46;
-                    auc = 87.51;
-                    break;
-                case 'virginia':
-                    beta_lsat = 0.207;
-                    beta_gpa = 3.439;
-                    beta_international = -2.374;
-                    beta_urm = 1.724;
-                    beta_0 = -48.249;
-                    accuracy = 82.64;
-                    auc = 87.66;
-                    break;
-                case 'michigan':
-                    beta_lsat = 0.132;
-                    beta_gpa = 2.266;
-                    beta_international = -3.014;
-                    beta_urm = 1.817;
-                    beta_0 = -31.221;
-                    accuracy = 74.26;
-                    auc = 81.53;
-                    break;
-                case 'northwestern':
-                    beta_lsat = 0.318;
-                    beta_gpa = 4.279;
-                    beta_international = -1.155;
-                    beta_urm = 2.765;
-                    beta_0 = -69.494;
-                    accuracy = 84.21;
-                    auc = 92.65;
-                    break;
-                case 'cornell':
-                    beta_lsat = 0.325;
-                    beta_gpa = 4.860;
-                    beta_international = 0.001;
-                    beta_urm = 2.263;
-                    beta_0 = -73.947;
-                    accuracy = 88.82;
-                    auc = 92.25;
-                    break;
-                case 'georgetown':
-                    beta_lsat = 0.380;
-                    beta_gpa = 5.178;
-                    beta_international = -0.499;
-                    beta_urm = 2.545;
-                    beta_0 = -83.024;
-                    accuracy = 86.64;
-                    auc = 94.68;
-                    break;
-                default:
-                    alert('Invalid school selected');
-                    return;
+            let results = [];
+
+            for (const [school, params] of Object.entries(schools)) {
+                const logit_p = params.beta_0 + (params.beta_lsat * lsat) + (params.beta_gpa * gpa) +
+                                (params.beta_international * international) + (params.beta_urm * urm);
+
+                const probability = 1 / (1 + Math.exp(-logit_p));
+
+                results.push({ school: params.name, probability: (probability * 100).toFixed(2), accuracy: params.accuracy, auc: params.auc });
             }
 
-            const logit_p = beta_0 + (beta_lsat * lsat) + (beta_gpa * gpa) +
-                            (beta_international * international) + (beta_urm * urm);
+            displayResults(results);
+        }
 
-            const probability = 1 / (1 + Math.exp(-logit_p));
+        function displayResults(results) {
+            let resultHTML = '<h3>Probabilities of Acceptance</h3>';
+            resultHTML += '<table><tr><th onclick="sortTable(0)">School</th><th onclick="sortTable(1)">Probability</th><th onclick="sortTable(2)">Accuracy</th><th onclick="sortTable(3)">AUC</th></tr>';
 
-            document.getElementById('result').innerHTML = `
-                <p>Probability of Acceptance: ${(probability * 100).toFixed(2)}%</p>
-                <p>Model Accuracy: ${accuracy}%</p>
-                <p>Model AUC: ${auc}%</p>
-            `;
+            results.forEach(result => {
+                resultHTML += `<tr><td>${result.school}</td>
+                               <td>${result.probability}%</td>
+                               <td>${result.accuracy}%</td>
+                               <td>${result.auc}%</td></tr>`;
+            });
+
+            resultHTML += '</table>';
+            document.getElementById('result').innerHTML = resultHTML;
+        }
+
+        function sortTable(columnIndex) {
+            const table = document.querySelector('table');
+            const rows = Array.from(table.rows).slice(1);
+
+            let sortedRows;
+            if (columnIndex === 1 || columnIndex === 2 || columnIndex === 3) { // Sort by Probability, Accuracy, or AUC
+                sortedRows = rows.sort((a, b) => parseFloat(a.cells[columnIndex].innerText) - parseFloat(b.cells[columnIndex].innerText));
+            } else {
+                sortedRows = rows.sort((a, b) => a.cells[columnIndex].innerText.localeCompare(b.cells[columnIndex].innerText));
+            }
+
+            if (this.sorted && this.sorted.columnIndex === columnIndex) {
+                sortedRows.reverse();
+                this.sorted.ascending = !this.sorted.ascending;
+            } else {
+                this.sorted = { columnIndex, ascending: true };
+            }
+
+            table.tBodies[0].append(...sortedRows);
         }
     </script>
 </body>
