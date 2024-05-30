@@ -6,20 +6,21 @@
     <title>T14 Law School Admissions Predictor</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Roboto', sans-serif;
             margin: 0;
             padding: 20px;
             display: flex;
             justify-content: center;
             align-items: center;
             flex-direction: column;
-            background-color: #f7f7f7;
+            background-color: #f0f4f8;
+            color: #333;
         }
         .container {
-            background-color: #fff;
-            padding: 20px;
+            background-color: #ffffff;
+            padding: 30px;
             border-radius: 10px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             max-width: 600px;
             width: 100%;
             margin-bottom: 20px;
@@ -27,38 +28,45 @@
         h1 {
             text-align: center;
             margin-bottom: 20px;
+            font-size: 24px;
+            color: #444;
         }
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 8px;
             font-weight: bold;
+            color: #555;
         }
         input[type="text"],
         input[type="number"],
         select {
             width: calc(100% - 20px);
-            padding: 10px;
+            padding: 12px;
             margin-bottom: 15px;
             border: 1px solid #ddd;
             border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 14px;
         }
         button {
             width: 100%;
-            padding: 10px;
-            background-color: #2889a7;
+            padding: 12px;
+            background-color: #007BFF;
             color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s ease;
         }
         button:hover {
-            background-color: #1f4b58;
+            background-color: #0056b3;
         }
         .result {
             text-align: center;
             margin-top: 20px;
             font-size: 18px;
+            color: #007BFF;
         }
         .disclaimer {
             margin-top: 20px;
@@ -70,6 +78,13 @@
             font-size: 14px;
             color: #555;
             margin-top: 10px;
+        }
+        a {
+            color: #007BFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
@@ -140,9 +155,6 @@
         Data source: <a href="https://www.lsd.law/download" target="_blank">https://www.lsd.law/download</a><br>
         Models were built based on data from the 2019-2023 cycles.<br>
          Developed by Frederick Liu. Last updated: 5/30/2024.
-    
-        
-
     </div>
 
     <script>
@@ -152,6 +164,11 @@
             const gpa = parseFloat(document.getElementById('gpa').value);
             const international = parseInt(document.getElementById('international').value);
             const urm = parseInt(document.getElementById('urm').value);
+
+            if (isNaN(lsat) || isNaN(gpa)) {
+                alert("Please enter both LSAT and GPA values.");
+                return;
+            }
 
             if (lsat > 180 || lsat < 120) {
                 alert("LSAT score must be between 120 and 180.");
