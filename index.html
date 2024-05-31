@@ -197,8 +197,6 @@
         </ul>
     </div>
 
-   
-
     <div class="disclaimer">
         <br>
         Please note that the estimated chances do not indicate that you personally have a specific percentage chance (e.g., 50%) <br>
@@ -258,7 +256,7 @@
 
                 const probability = 1 / (1 + Math.exp(-logit_p));
 
-                results.push({ school: params.name, probability: (probability * 100).toFixed(2), accuracy: params.accuracy, auc: params.auc });
+                results.push({ school: params.name, probability: Math.round(probability * 100), accuracy: Math.round(params.accuracy), auc: Math.round(params.auc) });
             }
 
             displayResults(results);
@@ -269,7 +267,7 @@
             resultHTML += '<table><tr><th onclick="sortTable(0)">School</th><th onclick="sortTable(1)">Probability</th><th onclick="sortTable(2)">Accuracy</th><th onclick="sortTable(3)">AUC</th></tr>';
 
             results.forEach(result => {
-                const probability = parseFloat(result.probability);
+                const probability = result.probability;
                 let color = '';
 
                 if (probability > 70) {
@@ -298,7 +296,7 @@
 
             let sortedRows;
             if (columnIndex === 1 || columnIndex === 2 || columnIndex === 3) { // Sort by Probability, Accuracy, or AUC
-                sortedRows = rows.sort((a, b) => parseFloat(a.cells[columnIndex].innerText) - parseFloat(b.cells[columnIndex].innerText));
+                sortedRows = rows.sort((a, b) => parseFloat(a.cells[columnIndex].innerText.replace('', '')) - parseFloat(b.cells[columnIndex].innerText.replace('', '')));
             } else {
                 sortedRows = rows.sort((a, b) => a.cells[columnIndex].innerText.localeCompare(b.cells[columnIndex].innerText));
             }
