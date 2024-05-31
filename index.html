@@ -81,6 +81,22 @@
             color: #555;
             margin-top: 10px;
         }
+        .color-explanation {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #555;
+        }
+        .color-box {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            margin-right: 8px;
+            border-radius: 3px;
+        }
+        .green { background-color: green; }
+        .yellow { background-color: yellow; }
+        .orange { background-color: orange; }
+        .red { background-color: red; }
         a {
             color: #003366;
             text-decoration: none;
@@ -159,6 +175,14 @@
         <div class="result" id="result"></div>
     </div>
 
+    <div class="container color-explanation">
+        <h2>Color Explanation</h2>
+        <p><span class="color-box green"></span>Green: Safe School</p>
+        <p><span class="color-box yellow"></span>Yellow: Target School</p>
+        <p><span class="color-box orange"></span>Orange: Reach School</p>
+        <p><span class="color-box red"></span>Red: Super-Reach School</p>
+    </div>
+    
     <div class="container explanation">
         <h2>Explanation of Model Performance Metrics</h2>
         <p><strong>Accuracy:</strong> The proportion of correctly classified instances. It is a measure of how often the model is correct. A higher accuracy indicates a better model.</p>
@@ -173,6 +197,8 @@
         </ul>
     </div>
 
+   
+
     <div class="disclaimer">
         <br>
         Please note that the estimated chances do not indicate that you personally have a specific percentage chance (e.g., 50%) <br>
@@ -182,7 +208,7 @@
 
         Data source: <a href="https://www.lsd.law/download" target="_blank">https://www.lsd.law/download</a><br>
         Models were built based on data from the 2019-2023 cycles.<br>
-         Developed by Frederick Liu. Last updated: 5/30/2024.
+        Developed by Frederick Liu. Last updated: 5/30/2024.
     </div>
 
     <script>
@@ -243,8 +269,21 @@
             resultHTML += '<table><tr><th onclick="sortTable(0)">School</th><th onclick="sortTable(1)">Probability</th><th onclick="sortTable(2)">Accuracy</th><th onclick="sortTable(3)">AUC</th></tr>';
 
             results.forEach(result => {
+                const probability = parseFloat(result.probability);
+                let color = '';
+
+                if (probability > 70) {
+                    color = 'green';
+                } else if (probability >= 40 && probability <= 70) {
+                    color = 'yellow';
+                } else if (probability >= 20 && probability < 40) {
+                    color = 'orange';
+                } else {
+                    color = 'red';
+                }
+
                 resultHTML += `<tr><td>${result.school}</td>
-                               <td>${result.probability}%</td>
+                               <td style="background-color: ${color};">${result.probability}%</td>
                                <td>${result.accuracy}%</td>
                                <td>${result.auc}%</td></tr>`;
             });
