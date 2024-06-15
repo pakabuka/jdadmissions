@@ -97,6 +97,7 @@
         .yellow { background-color: yellow; }
         .orange { background-color: orange; }
         .red { background-color: red; }
+        .light-green { background-color: lightgreen; }
         a {
             color: #003366;
             text-decoration: none;
@@ -271,6 +272,7 @@
 
     <div class="container color-explanation">
         <h2>Color Explanation</h2>
+        <p><span class="color-box light-green"></span>Mint: Super-Safe School (<em>Though likely be waitlisted due to yield protection</em>)</p>
         <p><span class="color-box green"></span>Green: Safe School</p>
         <p><span class="color-box yellow"></span>Yellow: Target School</p>
         <p><span class="color-box orange"></span>Orange: Reach School</p>
@@ -367,7 +369,9 @@
                 const probability = result.probability;
                 let color = '';
 
-                if (probability > 70) {
+                if (probability > 90) {
+                    color = 'lightgreen';
+                } else if (probability > 70 && probability <= 90) {
                     color = 'green';
                 } else if (probability >= 40 && probability <= 70) {
                     color = 'yellow';
